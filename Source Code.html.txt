@@ -1,0 +1,56 @@
+
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <title>Hola, mi amigo!</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+          <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="./aws.png" alt="aws" />
+            <div class="card-body">
+              <p class="card-text">
+                Hi my friend, I just created a website! Do you want to play the click game?
+              <p>
+                <button type="button" class="btn btn-success clickBtn" id="your-clicks">Your Clicks <span
+                    class="badge badge-light badge-success">0</span></button>
+                <button type="button" class="btn btn-danger clickBtn">My Clicks <span
+                    class="badge badge-light badge-danger">0</span></button>
+              </p>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var ws;
+    window.addEventListener('load', function () {
+      ws = new WebSocket(`ws://${document.location.host}/clicks/`, "protocolOne");
+      ws.onmessage = function (msg) {
+        const data = JSON.parse(msg.data);
+        console.log(data);
+        data.forEach(el => {
+          document.querySelector(`.badge-${el.btn}`).innerText = el.value;
+        });
+      };
+      document.querySelectorAll('.clickBtn').forEach((el) => {
+        el.addEventListener('click', (e) => {
+          const btnName = e.target.className.match(/\sbtn-(\w+)/)[1];
+          ws.send(btnName);
+        });
+      });
+
+    });
+
+  </script>
+</body>
+
+</html>
